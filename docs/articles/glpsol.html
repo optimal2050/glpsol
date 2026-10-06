@@ -80,7 +80,7 @@ glpsol</h1>
     
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/optimal2050/glpsol" class="external-link">glpsol</a></span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://optimal2050.github.io/glpsol/">glpsol</a></span><span class="op">)</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
@@ -100,7 +100,7 @@ requires the GLPK development files (<code>libglpk-dev</code> or
 does not need to be on the <code>PATH</code>:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/glpsol_path.html">glpsol_path</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "C:/Users/admin/AppData/Local/R/win-library/4.6/glpsol/bin/x64/glpsol.exe"</span></span>
+<span><span class="co">#&gt; [1] "C:/Users/admin/AppData/Local/Temp/RtmpsRBS6G/temp_libpath69e84f2b3bc6/glpsol/bin/x64/glpsol.exe"</span></span>
 <span><span class="fu"><a href="../reference/glpk_version.html">glpk_version</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "5.0"</span></span></code></pre></div>
 <p><code><a href="../reference/glpk_version.html">glpk_version()</a></code> returns the version of the GLPK library
@@ -130,8 +130,8 @@ log:</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">tail</a></span><span class="op">(</span><span class="va">res</span><span class="op">$</span><span class="va">log</span>, <span class="fl">4</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "OPTIMAL LP SOLUTION FOUND"                                                                                        </span></span>
 <span><span class="co">#&gt; [2] "Time used:   0.0 secs"                                                                                            </span></span>
-<span><span class="co">#&gt; [3] "Memory used: 0.1 Mb (126641 bytes)"                                                                               </span></span>
-<span><span class="co">#&gt; [4] "Writing basic solution to 'C:\\Users\\admin\\AppData\\Local\\Temp\\Rtmpmuh08I\\glpsol-5ce0493b1edf/transp.sol'..."</span></span></code></pre></div>
+<span><span class="co">#&gt; [3] "Memory used: 0.1 Mb (126664 bytes)"                                                                               </span></span>
+<span><span class="co">#&gt; [4] "Writing basic solution to 'C:\\Users\\admin\\AppData\\Local\\Temp\\RtmpgFe6bw\\glpsol-c31872b05022/transp.sol'..."</span></span></code></pre></div>
 <p>The solution is written to the file given with <code>-o</code>. Its
 <code>Status</code> line states the outcome:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
