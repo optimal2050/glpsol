@@ -1,0 +1,15 @@
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>/404.html</loc></url>
+<url><loc>/articles/glpsol.html</loc></url>
+<url><loc>/articles/index.html</loc></url>
+<url><loc>/authors.html</loc></url>
+<url><loc>/index.html</loc></url>
+<url><loc>/news/index.html</loc></url>
+<url><loc>/reference/glpk_version.html</loc></url>
+<url><loc>/reference/glpsol-package.html</loc></url>
+<url><loc>/reference/glpsol_path.html</loc></url>
+<url><loc>/reference/glpsol_read_solution.html</loc></url>
+<url><loc>/reference/glpsol_run.html</loc></url>
+<url><loc>/reference/index.html</loc></url>
+</urlset>
+

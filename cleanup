@@ -1,0 +1,3 @@
+#!/bin/sh
+rm -f src/Makevars src/*.o src/*.so src/*.dll src/glpsol src/glpsol.exe
+exit 0

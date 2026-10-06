@@ -1,0 +1,198 @@
+---
+title: "Solving MathProg, LP and MPS models with glpsol"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Solving MathProg, LP and MPS models with glpsol}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
+```{r setup}
+library(glpsol)
+```
+
+## Overview
+
+`glpsol` is the stand-alone solver of the GNU Linear Programming Kit (GLPK).
+It reads a model, solves it and writes the solution to a file. It is the
+reference implementation of **MathProg** (GMPL), the modelling language of
+GLPK, and it also reads **CPLEX LP** and **MPS** files.
+
+The solver is normally obtained by installing GLPK. This package builds and
+installs the executable as part of the R package, so that
+
+```r
+install.packages("glpsol")
+```
+
+is sufficient on Windows and macOS, where the CRAN binary contains its own copy
+of GLPK. On Linux the package is installed from source and requires the GLPK
+development files (`libglpk-dev` or `glpk-devel`); see the README. In either
+case the executable does not need to be on the `PATH`:
+
+```{r where}
+glpsol_path()
+glpk_version()
+```
+
+`glpk_version()` returns the version of the GLPK library against which the
+package was built.
+
+## Solving a MathProg model
+
+`glpsol_run()` accepts the arguments of the `glpsol` command line. The package
+includes the transportation example distributed with GLPK:
+
+```{r solve}
+mod <- system.file("models", "transp.mod", package = "glpsol")
+
+out <- tempfile("glpsol-")
+dir.create(out)
+sol <- file.path(out, "transp.sol")
+
+res <- glpsol_run(c("-m", mod, "-o", sol), echo = FALSE)
+res$status
+```
+
+`status` is the exit status of the process: `0` indicates that `glpsol` ran to
+completion. It does not indicate whether the model was feasible; that
+information is in the log:
+
+```{r log}
+tail(res$log, 4)
+```
+
+The solution is written to the file given with `-o`. Its `Status` line states
+the outcome:
+
+```{r readsol}
+writeLines(head(readLines(sol), 12))
+grep("^Status", readLines(sol), value = TRUE)
+```
+
+This printable format is intended for inspection rather than parsing. To load
+the solution into R, request the plain-text format with `-w` and the problem
+file with `--wglp` in the same run. The first contains the values by index, the
+second the row and column names:
+
+```{r readback}
+txt <- file.path(out, "transp.txt")
+glp <- file.path(out, "transp.glp")
+glpsol_run(c("-m", mod, "-w", txt, "--wglp", glp), echo = FALSE)
+
+s <- glpsol_read_solution(txt, names = glp)
+s
+s$cols[, c("name", "status", "primal", "dual")]
+s$rows[, c("name", "primal", "dual")]
+```
+
+`glpsol_read_solution()` reads the three kinds of solution that `glpsol` can
+write (basic, interior-point and integer) and reports the kind in `kind`. A
+model can also produce its own output with the MathProg `printf` and `table`
+statements. The most commonly used options are:
+
+| Option | Effect |
+|---|---|
+| `-o file` | write the solution in printable format |
+| `-w file` | write the solution in plain-text format |
+| `-y file` | write MathProg `printf`/`display` output to a file |
+| `--wlp file`, `--wfreemps file` | write the generated problem in CPLEX LP or free MPS format |
+| `--check` | translate and generate the model without solving it |
+| `--tmlim n` | limit the search to `n` seconds |
+
+`glpsol_run("--help")` lists the complete set.
+
+## Separate data files
+
+A MathProg model and its data are frequently kept in separate files; the `-d`
+option names the data file. The example above contains its own `data;` section,
+so a single file suffices. With a separate data file the call is
+
+```r
+glpsol_run(c("-m", "model.mod", "-d", "model.dat", "-o", "model.sol"))
+```
+
+## LP and MPS files
+
+The same executable reads the two common exchange formats, so a problem written
+by another tool can be solved in the same way:
+
+```r
+glpsol_run(c("--lp",      "model.lp",  "-o", "model.sol"))   # CPLEX LP
+glpsol_run(c("--freemps", "model.mps", "-o", "model.sol"))   # free MPS
+glpsol_run(c("--mps",     "model.mps", "-o", "model.sol"))   # fixed MPS
+```
+
+The LP method is selected with `--simplex` (the default) or `--interior`. A
+model with integer variables is solved by branch-and-cut; `--nomip` relaxes the
+integrality constraints and solves the LP instead.
+
+## Monitoring and limiting a run
+
+With `echo = TRUE` the log is written to the console as it is produced, which
+is useful for large models that run for a long time:
+
+```r
+glpsol_run(c("-m", "big.mod"), echo = TRUE)
+```
+
+In this mode the output is not captured and `log` is empty; use `echo = FALSE`,
+as in the examples above, to retain it.
+
+`timeout` terminates the process after the given number of seconds:
+
+```{r timeout}
+res <- glpsol_run(c("-m", mod), echo = FALSE, timeout = 60)
+res$timed_out
+```
+
+This differs from the `--tmlim` option of GLPK, which limits the search phase
+only. `timeout` applies to the whole run, including model translation and
+output, and is available on all platforms. A run terminated in this way returns
+`timed_out = TRUE` and `status = 124` instead of raising an error.
+
+## Use from other packages
+
+`glpsol_path()` is the intended integration point. A package that generates
+MathProg can pass the path to `system2()` and keep its own calling convention.
+The dependency can be made optional as follows:
+
+```r
+find_glpsol <- function() {
+  if (requireNamespace("glpsol", quietly = TRUE)) {
+    hit <- tryCatch(glpsol::glpsol_path(), error = function(e) NULL)
+    if (!is.null(hit)) return(hit)
+  }
+  Sys.which("glpsol")            # fall back to an installed copy
+}
+```
+
+This is the lookup used by [multimod](https://github.com/optimal2050/multimod)
+and [energyRt](https://github.com/optimal2050/energyRt): the bundled
+executable is consulted after any explicitly configured path and before copies
+found on the `PATH`, because its version is known.
+
+## Relation to other packages
+
+[glpkAPI](https://CRAN.R-project.org/package=glpkAPI), the R binding to the
+GLPK C API, was archived from CRAN in March 2026. This package fills the
+resulting gap at the command-line level: `install.packages()` provides the
+solver, `glpsol_run()` executes it in a separate process, and
+`glpsol_read_solution()` reads the result. It does not provide an interface to
+the C API.
+
+Two alternatives remain for that purpose.
+[Rglpk](https://CRAN.R-project.org/package=Rglpk) is on CRAN and solves a
+matrix-level LP in-process with `Rglpk_solve_LP()`; it reads a single MathProg
+file but not separate data files. glpkAPI itself can still be installed from
+the [CRAN archive](https://CRAN.R-project.org/src/contrib/Archive/glpkAPI/)
+against a system GLPK installation and provides the full API, including named
+rows and columns, sensitivity analysis and callbacks.
+
+```{r cleanup, include = FALSE}
+unlink(out, recursive = TRUE)
+```

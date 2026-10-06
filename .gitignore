@@ -1,0 +1,12 @@
+.Rproj.user
+src/*.o
+src/*.so
+src/*.dll
+src/glpsol
+src/glpsol.exe
+src/Makevars
+*.Rcheck/
+drafts/
+tmp/
+.Rhistory
+.claude/

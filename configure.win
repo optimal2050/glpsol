@@ -1,0 +1,3 @@
+#!/bin/sh
+# Windows links the static GLPK shipped with Rtools; see src/Makevars.win.
+exit 0

@@ -1,0 +1,16 @@
+The glpsol package is licensed under the GNU General Public License,
+version 3 (GPL-3).
+
+It includes one file from the GNU Linear Programming Kit (GLPK) 5.0,
+unmodified:
+
+  src/glpk/glpsol.c
+
+    Copyright (C) 2000-2020 Free Software Foundation, Inc.
+    License: GPL (>= 3)
+    Source: https://ftp.gnu.org/gnu/glpk/glpk-5.0.tar.gz (examples/glpsol.c)
+
+The original copyright and license header is retained in the file.
+
+The GLPK library itself is not included; the package links against a
+GLPK (>= 5.0) installation on the build system.

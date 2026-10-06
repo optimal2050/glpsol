@@ -1,0 +1,32 @@
+Package: glpsol
+Type: Package
+Title: Bundled 'GLPK' Solver for 'MathProg', 'LP' and 'MPS' Models
+Version: 0.1.0
+Authors@R: c(
+    person(given = "Oleg", family = "Lugovoy",
+           email = "olugovoy@optimalsolution.dev",
+           role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0001-5546-9875")),
+    person(given = "Free Software Foundation, Inc.",
+           role = "cph",
+           comment = "src/glpk/glpsol.c from 'GLPK' 5.0, see inst/COPYRIGHTS"))
+Description: Ships the 'glpsol' stand-alone solver of the GNU Linear
+    Programming Kit ('GLPK') with R and runs it as a separate process with a
+    time limit and an optional live log. 'glpsol' reads 'MathProg' (GMPL)
+    models with separate data files, CPLEX LP and MPS files, and solves them
+    with the simplex, interior-point or branch-and-cut methods, writing the
+    solution to a file. Windows and macOS binary builds carry a static copy
+    of 'GLPK'; other platforms link against the system library.
+License: GPL-3
+Encoding: UTF-8
+SystemRequirements: GLPK (>= 5.0): libglpk-dev (deb), glpk-devel (rpm),
+    glpk (brew)
+URL: https://github.com/optimal2050/glpsol
+BugReports: https://github.com/optimal2050/glpsol/issues
+Suggests:
+    testthat (>= 3.0.0),
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
+Config/testthat/edition: 3
+Config/roxygen2/version: 8.1.0

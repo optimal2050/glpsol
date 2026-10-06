@@ -1,0 +1,87 @@
+#!/bin/sh
+# Locates the GLPK (>= 5.0) headers and library and writes src/Makevars.
+#
+# Search order:
+#   1. GLPK_CFLAGS / GLPK_LIBS environment variables, if both are set
+#   2. GLPK_HOME (expects GLPK_HOME/include and GLPK_HOME/lib)
+#   3. pkg-config glpk
+#   4. compiler defaults, then Homebrew and /usr/local prefixes
+# For each candidate, -lglpk is tried alone and then with -lgmp.
+
+: ${R_HOME=`R RHOME`}
+if test -z "${R_HOME}"; then
+  echo "could not determine R_HOME" >&2
+  exit 1
+fi
+RBIN="${R_HOME}/bin/R"
+CC=`"${RBIN}" CMD config CC`
+CPPFLAGS=`"${RBIN}" CMD config CPPFLAGS`
+CFLAGS=`"${RBIN}" CMD config CFLAGS`
+LDFLAGS=`"${RBIN}" CMD config LDFLAGS`
+
+TMPDIR_CONF=`mktemp -d 2>/dev/null || echo /tmp/glpsol-conf-$$`
+mkdir -p "${TMPDIR_CONF}"
+cat > "${TMPDIR_CONF}/conftest.c" <<EOF
+#include <glpk.h>
+#if GLP_MAJOR_VERSION < 5
+#error "GLPK >= 5.0 is required"
+#endif
+int main(void) { glp_version(); return 0; }
+EOF
+
+try_glpk() {
+  ${CC} ${CPPFLAGS} $1 ${CFLAGS} "${TMPDIR_CONF}/conftest.c" \
+    -o "${TMPDIR_CONF}/conftest" ${LDFLAGS} $2 >/dev/null 2>&1
+}
+
+found=""
+check_candidate() {
+  if try_glpk "$1" "$2"; then
+    GLPK_CFLAGS="$1"; GLPK_LIBS="$2"; found=yes
+  elif try_glpk "$1" "$2 -lgmp"; then
+    GLPK_CFLAGS="$1"; GLPK_LIBS="$2 -lgmp"; found=yes
+  fi
+}
+
+if test -n "${GLPK_CFLAGS}" && test -n "${GLPK_LIBS}"; then
+  check_candidate "${GLPK_CFLAGS}" "${GLPK_LIBS}"
+fi
+if test -z "${found}" && test -n "${GLPK_HOME}"; then
+  check_candidate "-I${GLPK_HOME}/include" "-L${GLPK_HOME}/lib -lglpk"
+fi
+if test -z "${found}" && pkg-config --exists glpk 2>/dev/null; then
+  check_candidate "`pkg-config --cflags glpk`" "`pkg-config --libs glpk`"
+fi
+if test -z "${found}"; then
+  check_candidate "" "-lglpk"
+fi
+for prefix in /opt/homebrew /usr/local /opt/local; do
+  if test -z "${found}" && test -f "${prefix}/include/glpk.h"; then
+    check_candidate "-I${prefix}/include" "-L${prefix}/lib -lglpk"
+  fi
+done
+
+rm -rf "${TMPDIR_CONF}"
+
+if test -z "${found}"; then
+  cat >&2 <<EOF
+------------------------------------------------------------------------
+glpsol: could not find GLPK (>= 5.0).
+
+Install the GLPK development files, for example:
+  Debian/Ubuntu:   sudo apt-get install libglpk-dev
+  Fedora/RHEL:     sudo dnf install glpk-devel
+  macOS:           brew install glpk
+
+or point the build at an existing installation:
+  GLPK_HOME=/path/to/glpk R CMD INSTALL glpsol
+  GLPK_CFLAGS=-I... GLPK_LIBS="-L... -lglpk" R CMD INSTALL glpsol
+------------------------------------------------------------------------
+EOF
+  exit 1
+fi
+
+echo "glpsol: using GLPK_CFLAGS='${GLPK_CFLAGS}' GLPK_LIBS='${GLPK_LIBS}'"
+sed -e "s|@GLPK_CFLAGS@|${GLPK_CFLAGS}|" -e "s|@GLPK_LIBS@|${GLPK_LIBS}|" \
+  src/Makevars.in > src/Makevars
+exit 0
