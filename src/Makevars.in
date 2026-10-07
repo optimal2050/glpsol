@@ -7,5 +7,7 @@ GLPSOL = glpsol
 
 all: $(SHLIB) $(GLPSOL)
 
+# -lm: glpsol.c calls fmod() and friends; recent GNU ld does not link libm
+# implicitly for executables.
 $(GLPSOL): glpk/glpsol.c
-	$(CC) $(CPPFLAGS) $(PKG_CPPFLAGS) $(CFLAGS) -o $@ glpk/glpsol.c $(LDFLAGS) $(PKG_LIBS)
+	$(CC) $(CPPFLAGS) $(PKG_CPPFLAGS) $(CFLAGS) -o $@ glpk/glpsol.c $(LDFLAGS) $(PKG_LIBS) -lm
