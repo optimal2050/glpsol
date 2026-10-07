@@ -21,8 +21,4 @@ Linux; `configure` locates it and fails with install instructions if absent.
 * Windows 11, R 4.5.3 and R 4.6.1 (local)
 * win-builder, R-devel (2026-10-05 r90641)
 
-The win-builder check reported a timeout for <https://www.gnu.org/software/glpk/>
-(linked from the README). The URL is the GLPK home page and is correct; the
-host was slow to respond at the time of the check.
-
 <!-- Add before submission: R-hub linux + macos -->

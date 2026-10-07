@@ -4,7 +4,7 @@
 # Search order:
 #   1. GLPK_CFLAGS / GLPK_LIBS environment variables, if both are set
 #   2. GLPK_HOME (expects GLPK_HOME/include and GLPK_HOME/lib)
-#   3. pkg-config glpk
+#   3. pkg-config glpk, then pkg-config --static glpk
 #   4. compiler defaults, then Homebrew and /usr/local prefixes
 # For each candidate, -lglpk is tried alone and then with -lgmp.
 
@@ -26,7 +26,15 @@ cat > "${TMPDIR_CONF}/conftest.c" <<EOF
 #if GLP_MAJOR_VERSION < 5
 #error "GLPK >= 5.0 is required"
 #endif
-int main(void) { glp_version(); return 0; }
+/* glp_exact() pulls in the exact-arithmetic objects, which need libgmp when
+   GLPK was built with it; a probe that only calls glp_version() links
+   against a static libglpk without -lgmp and the real build then fails. */
+int main(void)
+{  glp_prob *p = glp_create_prob();
+   glp_exact(p, NULL);
+   glp_delete_prob(p);
+   return 0;
+}
 EOF
 
 try_glpk() {
@@ -51,6 +59,9 @@ if test -z "${found}" && test -n "${GLPK_HOME}"; then
 fi
 if test -z "${found}" && pkg-config --exists glpk 2>/dev/null; then
   check_candidate "`pkg-config --cflags glpk`" "`pkg-config --libs glpk`"
+  if test -z "${found}"; then
+    check_candidate "`pkg-config --cflags glpk`" "`pkg-config --libs --static glpk`"
+  fi
 fi
 if test -z "${found}"; then
   check_candidate "" "-lglpk"
