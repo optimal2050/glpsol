@@ -20,5 +20,4 @@ Linux; `configure` locates it and fails with install instructions if absent.
 
 * Windows 11, R 4.5.3 and R 4.6.1 (local)
 * win-builder, R-devel (2026-10-05 r90641)
-
-<!-- Add before submission: R-hub linux + macos -->
+* R-hub: linux (R-devel), ubuntu-release (R 4.6.1), macos-arm64 (R-devel)
