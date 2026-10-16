@@ -4,7 +4,7 @@
 \name{glpsol-package}
 \alias{glpsol}
 \alias{glpsol-package}
-\title{glpsol: Bundled 'GLPK' Solver for 'MathProg', 'LP' and 'MPS' Models}
+\title{glpsol: Bundled 'GLPK' Solver for 'MathProg', LP and MPS Models}
 \description{
 Ships the 'glpsol' stand-alone solver of the GNU Linear Programming Kit ('GLPK') with R and runs it as a separate process with a time limit and an optional live log. 'glpsol' reads 'MathProg' ('GMPL') models with separate data files, 'CPLEX' LP and MPS files, and solves them with the simplex, interior-point or branch-and-cut methods, writing the solution to a file. Windows and macOS binary builds carry a static copy of 'GLPK'; other platforms link against the system library.
 }

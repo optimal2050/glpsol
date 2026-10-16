@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">glpsol</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.0.9000</span>
       </span>
     </div>
 
@@ -51,7 +51,12 @@
     </div>
 
     <div class="section level2">
-<h2 class="page-header" data-toc-text="0.1.0" id="glpsol-010">glpsol 0.1.0<a class="anchor" aria-label="anchor" href="#glpsol-010"></a></h2>
+<h2 class="page-header" data-toc-text="development version" id="glpsol-development-version">glpsol (development version)<a class="anchor" aria-label="anchor" href="#glpsol-development-version"></a></h2>
+<ul><li>
+<code>Title</code>: LP and MPS are file formats, not software, so they are no longer single-quoted (CRAN remark on 0.1.0).</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.1.0" id="glpsol-010">glpsol 0.1.0<small>2026-10-16</small><a class="anchor" aria-label="anchor" href="#glpsol-010"></a></h2>
 <ul><li><p>First release.</p></li>
 <li><p>Ships GLPK’s stand-alone <code>glpsol</code> solver, so solving MathProg (GMPL), CPLEX LP and MPS models needs no separate GLPK installation on Windows and macOS.</p></li>
 <li><p><code><a href="../reference/glpsol_path.html">glpsol_path()</a></code> returns the bundled executable; <code><a href="../reference/glpsol_run.html">glpsol_run()</a></code> runs it in a separate process with an optional live log and a <code>timeout</code> that also covers model translation and writing the solution, which GLPK’s own <code>--tmlim</code> does not. <code><a href="../reference/glpk_version.html">glpk_version()</a></code> reports the version of the linked library.</p></li>

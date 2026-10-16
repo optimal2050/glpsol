@@ -1,5 +1,10 @@
 # glpsol
 
+<!-- badges: start -->
+[![CRAN status](https://www.r-pkg.org/badges/version/glpsol)](https://CRAN.R-project.org/package=glpsol)
+[![CRAN downloads](https://cranlogs.r-pkg.org/badges/grand-total/glpsol)](https://cran.r-project.org/package=glpsol)
+<!-- badges: end -->
+
 The stand-alone solver of the GNU Linear Programming Kit (GLPK), distributed
 as an R package.
 

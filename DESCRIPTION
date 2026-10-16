@@ -1,7 +1,7 @@
 Package: glpsol
 Type: Package
-Title: Bundled 'GLPK' Solver for 'MathProg', 'LP' and 'MPS' Models
-Version: 0.1.0
+Title: Bundled 'GLPK' Solver for 'MathProg', LP and MPS Models
+Version: 0.1.0.9000
 Authors@R: c(
     person(given = "Oleg", family = "Lugovoy",
            email = "olugovoy@optimalsolution.dev",
@@ -29,4 +29,4 @@ Suggests:
     rmarkdown
 VignetteBuilder: knitr
 Config/testthat/edition: 3
-Config/roxygen2/version: 8.1.0
+Config/roxygen2/version: 8.1.1

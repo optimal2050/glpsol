@@ -1,3 +1,8 @@
+# glpsol (development version)
+
+* `Title`: LP and MPS are file formats, not software, so they are no longer
+  single-quoted (CRAN remark on 0.1.0).
+
 # glpsol 0.1.0
 
 * First release.
